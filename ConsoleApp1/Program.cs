@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections;
 using MySql.Data.MySqlClient;
+using Microsoft.SqlServer.Server;
+using Microsoft.SqlServer;
 
 namespace WorkTest
 {
@@ -43,18 +45,30 @@ namespace WorkTest
     {
         static void Main(string[] args)
         {
-            string AddSQl = "server=localhost; port=3307; user=root; database=client; password=1234";
-            MySqlConnection Connection = new MySqlConnection(AddSQl);
+            List<string> array = new List<string>();
+            int[] array1 = Array.ConvertAll(array.ToArray(), Int32.Parse);
+
+
+            string AddSQl = "server=localhost; SSL mode = None; port=3306; user=root; database=client; password=0000";
+            MySqlConnection Connection = new MySqlConnection(AddSQl); ;
             Connection.Open();
-            string request = "SELECT id, Price FROM client WHERE PRICE > 200";
+            string request = "SELECT Price FROM client WHERE Price > 200";
             MySqlCommand command = new MySqlCommand(request, Connection);
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Console.WriteLine(reader[0].ToString() + " " + reader[1].ToString());
+                array.Add(reader[0].ToString());
+
             }
             reader.Close();
             Connection.Close();
+            Array.Sort(array1);
+
+            foreach (int i in array1)
+            {
+                Console.WriteLine(i);
+            }
+            Console.ReadLine();
         }
     }
 }

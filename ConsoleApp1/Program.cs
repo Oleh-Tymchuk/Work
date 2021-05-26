@@ -41,28 +41,36 @@ namespace WorkTest
             return Price.CompareTo(ord.Price);
         }
     }
+
     class Program
     {
         static void Main(string[] args)
         {
             List<string> array = new List<string>();
-            
+
             string AddSQl = "server=localhost; SSL mode = None; port=3306; user=root; database=client; password=0000";
-            MySqlConnection Connection = new MySqlConnection(AddSQl); ;
-            Connection.Open();
-            string request = "SELECT Price FROM client WHERE Price > 200";
-            MySqlCommand command = new MySqlCommand(request, Connection);
-            MySqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+
+            using (MySqlConnection Connection = new MySqlConnection(AddSQl))
             {
-                array.Add(reader[0].ToString());
+                Connection.Open();
 
+                string request = "SELECT Price FROM client WHERE Price > 200 and PaymentMethod = 'VISA'";
+
+                MySqlCommand command = new MySqlCommand(request, Connection);
+
+                MySqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    array.Add(reader[0].ToString());
+
+                }
+                reader.Close();
+
+                Connection.Close();
             }
-            reader.Close();
 
-            Connection.Close();
-
-            var array1 = Array.ConvertAll<string, int>(array.ToArray(), t => Int32.Parse(t));
+            var array1 = Array.ConvertAll(array.ToArray(), t => Int32.Parse(t));
 
             Array.Sort(array1);
 

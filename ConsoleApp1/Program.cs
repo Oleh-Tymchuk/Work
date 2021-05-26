@@ -46,9 +46,7 @@ namespace WorkTest
         static void Main(string[] args)
         {
             List<string> array = new List<string>();
-            int[] array1 = Array.ConvertAll(array.ToArray(), Int32.Parse);
-
-
+            
             string AddSQl = "server=localhost; SSL mode = None; port=3306; user=root; database=client; password=0000";
             MySqlConnection Connection = new MySqlConnection(AddSQl); ;
             Connection.Open();
@@ -61,7 +59,11 @@ namespace WorkTest
 
             }
             reader.Close();
+
             Connection.Close();
+
+            var array1 = Array.ConvertAll<string, int>(array.ToArray(), t => Int32.Parse(t));
+
             Array.Sort(array1);
 
             foreach (int i in array1)

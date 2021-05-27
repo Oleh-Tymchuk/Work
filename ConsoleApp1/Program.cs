@@ -62,7 +62,7 @@ namespace WorkTest
 
                     while (reader.Read())
                     {
-                        Console.WriteLine(reader[0].ToString());                        
+                        Console.WriteLine(reader[0].ToString());
                     }
                     conect.Close();
                 }
@@ -107,7 +107,7 @@ namespace WorkTest
         }
         static void Main(string[] args)
         {
-            SortSqlData("MS", @"Data Source = database-1.cnfs5af4detk.us-east-2.rds.amazonaws.com; Initial Catalog=FTR; User id = admin; Password =Development-2021", "SELECT Price FROM dbo.Services", (200, 1000));
+            SortSqlData("MS", @"Data Source = database-1.cnfs5af4detk.us-east-2.rds.amazonaws.com; Initial Catalog=FTR; User id = admin; Password =Development-2021", "SELECT Price FROM dbo.Services", (0, 1000));
         }
     }
 }

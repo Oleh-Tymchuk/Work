@@ -5,6 +5,9 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using Microsoft.SqlServer;
 using System.Data.SqlClient;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
+using Dapper;
 
 namespace WorkTest
 {
@@ -49,12 +52,23 @@ namespace WorkTest
             {
                 List<string> array = new List<string>();
 
-                string AddSql = SqlPath;
-                using (SqlConnection Connection = new SqlConnection(SqlPath))
+                using (SqlConnection conect = new SqlConnection(SqlPath))
                 {
-                    Connection.Open();
-                    Connection.Close();
+                    conect.Open();
+
+                    var command = new SqlCommand(Request, conect);
+
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Console.WriteLine(reader[0].ToString());                        
+                    }
+                    conect.Close();
                 }
+                var result = ConvertAndSort(array, scope);
+
+                ShowResult(result);
             }
             else
             {
@@ -93,14 +107,7 @@ namespace WorkTest
         }
         static void Main(string[] args)
         {
-            SortSqlData("MY", "server = localhost; SSL mode = none; port = 3306; user = root; database = client; password = 0000", "SELECT Price FROM client", (200, 1000));
-            string AddSql = "Data Source = database-1.cnfs5af4detk.us-east-2.rds.amazonaws.com; Integrated Security = true; Uid = admin; Password = Development-2021; Initial catalog = FTR";
-            using (SqlConnection Connection = new SqlConnection(AddSql))
-            {
-                Connection.Open();
-                Console.WriteLine("Good");
-                Connection.Close();
-            }
+            SortSqlData("MS", @"Data Source = database-1.cnfs5af4detk.us-east-2.rds.amazonaws.com; Initial Catalog=FTR; User id = admin; Password =Development-2021", "SELECT Price FROM dbo.Services", (200, 1000));
         }
     }
 }

@@ -20,60 +20,26 @@ namespace WorkTest
         /// <param name="Request"> Your SQL Request. Example: "SELECT Price FROM client" </param>
         /// <param name="Choose"> Choose Betwenn MS SQL and MySQL. Example: Enter MS for MS SQL and MY for MySQL </param>
         /// <param name="scope"> Scope for sort</param>
-        public static void SortSqlData(string Choose, string SqlPath, string Request, (int, int) scope)
+        public static void SortSqlData(string SqlPath, string Request, (int, int) scope)
         {
-            if (Choose == "MY")
+            List<string> array = new List<string>();
+
+            using (SqlConnection conect = new SqlConnection(SqlPath))
             {
-                List<string> array = new List<string>();
+                conect.Open();
 
-                string AddSql = SqlPath;
+                var command = new SqlCommand(Request, conect);
 
-                using (MySqlConnection Connection = new MySqlConnection(AddSql))
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    Connection.Open();
-
-                    MySqlCommand command = new MySqlCommand(Request, Connection);
-
-                    MySqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        array.Add(reader[0].ToString());
-
-                    }
-                    reader.Close();
-
-                    Connection.Close();
+                    array.Add(reader[0].ToString());
+                    Console.WriteLine(reader[0].ToString());
                 }
-                var result = ConvertAndSort(array, scope);
-                ShowResult(result);
+                conect.Close();
             }
-            else if (Choose == "MS")
-            {
-                List<string> array = new List<string>();
-
-                using (SqlConnection conect = new SqlConnection(SqlPath))
-                {
-                    conect.Open();
-
-                    var command = new SqlCommand(Request, conect);
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        Console.WriteLine(reader[0].ToString());
-                    }
-                    conect.Close();
-                }
-                var result = ConvertAndSort(array, scope);
-
-                ShowResult(result);
-            }
-            else
-            {
-                throw new Exception("Didn't choose a right SQL");
-            }
+            var result = ConvertAndSort(array, scope);
 
         }
         /// <summary>
@@ -94,20 +60,9 @@ namespace WorkTest
 
             return finalarray;
         }
-        /// <summary>
-        /// Unnecessary method for getting result
-        /// </summary>
-        /// <param name="array"> Data to show </param>
-        public static void ShowResult(int[] array)
-        {
-            foreach (int i in array)
-            {
-                Console.WriteLine(i);
-            }
-        }
         static void Main(string[] args)
         {
-            SortSqlData("MS", @"Data Source = database-1.cnfs5af4detk.us-east-2.rds.amazonaws.com; Initial Catalog=FTR; User id = admin; Password =Development-2021", "SELECT Price FROM dbo.Services", (0, 1000));
+            SortSqlData(@"Data Source = database-1.cnfs5af4detk.us-east-2.rds.amazonaws.com; Initial Catalog=FTR; User id = admin; Password =Development-2021", "SELECT Price FROM dbo.Services", (0, 1000));
         }
     }
 }

@@ -22,6 +22,19 @@ namespace WorkTest
         /// <param name="scope"> Scope for sort</param>
         public static void SortSqlData(string SqlPath, string Request, (int, int) scope)
         {
+            int[] ConvertAndSort(List<string> array1, (int, int) scope1)
+            {
+                var array2 = Array.ConvertAll(array1.ToArray(), t => Int32.Parse(t));
+
+                var count = array2.Where(x => x >= scope.Item1 && x <= scope.Item2);
+
+                var finalarray = count.ToArray();
+
+                Array.Sort(finalarray);
+
+                return finalarray;
+            }
+
             List<string> array = new List<string>();
 
             using (SqlConnection conect = new SqlConnection(SqlPath))
@@ -35,30 +48,13 @@ namespace WorkTest
                 while (reader.Read())
                 {
                     array.Add(reader[0].ToString());
+
                     Console.WriteLine(reader[0].ToString());
                 }
                 conect.Close();
             }
             var result = ConvertAndSort(array, scope);
 
-        }
-        /// <summary>
-        /// Convert string Data from SQL to Int array and sort it 
-        /// </summary>
-        /// <param name="array"></param>
-        /// <param name="scope"></param>
-        /// <returns></returns>
-        public static int[] ConvertAndSort(List<string> array, (int, int) scope)
-        {
-            var array1 = Array.ConvertAll(array.ToArray(), t => Int32.Parse(t));
-
-            var count = array1.Where(x => x >= scope.Item1 && x <= scope.Item2);
-
-            var finalarray = count.ToArray();
-
-            Array.Sort(finalarray);
-
-            return finalarray;
         }
         static void Main(string[] args)
         {
